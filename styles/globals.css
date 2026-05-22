@@ -1,0 +1,50 @@
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+:root {
+  /* Brand colours */
+  --color-tilt-purple: #7a3ce2;
+  --color-high-score-orange: #ff5e1f;
+  --color-crema: #f7efe3;
+  --color-after-dark: #14101a;
+  --color-last-train-purple: #2a1745;
+
+  /* Functional tokens */
+  --color-bg: var(--color-last-train-purple);
+  --color-fg: var(--color-crema);
+  --color-accent: var(--color-tilt-purple);
+  --color-action: var(--color-high-score-orange);
+  --color-text-muted: rgb(247 239 227 / 0.72);
+
+  /* Type */
+  --font-display: var(--font-space-grotesk);
+  --font-body: var(--font-inter);
+  --font-accent: var(--font-press-start);
+
+  /* Spacing rhythm */
+  --grid-gutter: 80px;
+  --grid-gutter-mobile: 16px;
+
+  /* Motion */
+  --motion-fast: 120ms;
+  --motion-base: 220ms;
+  --motion-slow: 480ms;
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--color-tilt-purple);
+  color: var(--color-crema);
+}
+
+/* Focus ring — Crema outline on dark backgrounds (accessibility) */
+:focus-visible {
+  outline: 2px solid var(--color-crema);
+  outline-offset: 2px;
+}
