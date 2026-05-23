@@ -1,0 +1,60 @@
+import Link from "next/link";
+import { cn } from "@/lib/utils/cn";
+
+type Variant = "primary" | "secondary" | "ghost";
+
+interface CTAButtonProps {
+  href?: string;
+  onClick?: () => void;
+  variant?: Variant;
+  className?: string;
+  children: React.ReactNode;
+  type?: "button" | "submit" | "reset";
+  disabled?: boolean;
+  "aria-label"?: string;
+}
+
+const variantClasses: Record<Variant, string> = {
+  primary:
+    "bg-high-score-orange text-after-dark hover:opacity-90 focus-visible:ring-2 focus-visible:ring-high-score-orange focus-visible:ring-offset-2 focus-visible:ring-offset-last-train-purple",
+  secondary:
+    "border border-crema text-crema hover:bg-crema hover:text-after-dark focus-visible:ring-2 focus-visible:ring-crema focus-visible:ring-offset-2 focus-visible:ring-offset-last-train-purple",
+  ghost:
+    "text-crema underline underline-offset-4 hover:text-high-score-orange focus-visible:ring-2 focus-visible:ring-crema",
+};
+
+const base =
+  "inline-flex items-center justify-center rounded-sm px-6 py-3 font-display text-sm font-semibold uppercase tracking-tight transition-all duration-[var(--motion-fast)] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50";
+
+export function CTAButton({
+  href,
+  onClick,
+  variant = "primary",
+  className,
+  children,
+  type = "button",
+  disabled,
+  "aria-label": ariaLabel,
+}: CTAButtonProps) {
+  const classes = cn(base, variantClasses[variant], className);
+
+  if (href) {
+    return (
+      <Link href={href} className={classes} aria-label={ariaLabel}>
+        {children}
+      </Link>
+    );
+  }
+
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      className={classes}
+      disabled={disabled}
+      aria-label={ariaLabel}
+    >
+      {children}
+    </button>
+  );
+}

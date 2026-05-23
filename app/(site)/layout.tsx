@@ -1,3 +1,6 @@
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+
 export default function SiteLayout({
   children,
 }: {
@@ -11,9 +14,9 @@ export default function SiteLayout({
       >
         Skip to content
       </a>
-      {/* PLACEHOLDER: Header added in step 3 */}
+      <Header />
       <main id="main">{children}</main>
-      {/* PLACEHOLDER: Footer added in step 3 */}
+      <Footer />
     </>
   );
 }
