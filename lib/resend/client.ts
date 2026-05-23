@@ -1,0 +1,34 @@
+import { Resend } from "resend";
+import { FunctionEnquiryCustomer } from "@/lib/email-templates/FunctionEnquiryCustomer";
+import { FunctionEnquiryTeam } from "@/lib/email-templates/FunctionEnquiryTeam";
+import type { FunctionEnquiryInput } from "@/lib/validation/function-enquiry";
+
+const resend = new Resend(process.env.RESEND_API_KEY!);
+
+export async function sendTeamNotification(
+  data: FunctionEnquiryInput,
+  calendarEventId: string,
+  calendarEventUrl?: string
+) {
+  return resend.emails.send({
+    from: `Beercade Bookings <${process.env.RESEND_FROM_HELLO!}>`,
+    to: [process.env.TEAM_INBOX!],
+    replyTo: data.email,
+    subject: `New enquiry — ${data.name} (${data.groupSize} on ${data.preferredDate})`,
+    react: FunctionEnquiryTeam({ data, calendarEventId, calendarEventUrl }),
+  });
+}
+
+export async function sendCustomerAutoresponder(data: FunctionEnquiryInput) {
+  return resend.emails.send({
+    from: `Beercade <${process.env.RESEND_FROM_FUNCTIONS!}>`,
+    to: data.email,
+    replyTo: process.env.RESEND_REPLY_TO!,
+    subject: "Got your enquiry — Beercade",
+    react: FunctionEnquiryCustomer({
+      name: data.name,
+      groupSize: data.groupSize,
+      preferredDate: data.preferredDate,
+    }),
+  });
+}
