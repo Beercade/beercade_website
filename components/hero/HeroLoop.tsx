@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { urlFor } from "@/lib/sanity/image";
 import { CTAButton } from "@/components/ui/CTAButton";
-import { cn } from "@/lib/utils/cn";
 import type { SanityImageSource } from "@sanity/image-url";
 
 interface HeroLoopProps {
@@ -24,24 +23,27 @@ export function HeroLoop({
   ctaLabel = "BOOK A FUNCTION",
   ctaTarget = "/functions",
 }: HeroLoopProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mediaQuery.matches && videoRef.current) {
-      videoRef.current.pause();
-    }
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
   }, []);
+
+  const showVideo = videoUrl && !reducedMotion;
+  const showPoster = poster && (!videoUrl || reducedMotion);
 
   return (
     <section
       className="relative flex min-h-[90svh] items-end overflow-hidden bg-tilt-purple"
       aria-label="Hero"
     >
-      {/* Background video or poster */}
-      {videoUrl ? (
+      {/* Background — video when motion is fine, poster when reduced motion preferred */}
+      {showVideo ? (
         <video
-          ref={videoRef}
           src={videoUrl}
           autoPlay
           loop
@@ -50,7 +52,7 @@ export function HeroLoop({
           className="absolute inset-0 h-full w-full object-cover opacity-40"
           aria-hidden="true"
         />
-      ) : poster ? (
+      ) : showPoster ? (
         <Image
           src={urlFor(poster).width(1920).height(1080).auto("format").url()}
           alt={poster.alt ?? "Beercade venue"}

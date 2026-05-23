@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, Inter, Press_Start_2P } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import "@/styles/globals.css";
 
 const spaceGrotesk = Space_Grotesk({
@@ -45,7 +46,13 @@ export default function RootLayout({
       lang="en"
       className={`${spaceGrotesk.variable} ${inter.variable} ${pressStart.variable}`}
     >
-      <body>{children}</body>
+      <head>
+        <link rel="preconnect" href="https://cdn.sanity.io" />
+      </head>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

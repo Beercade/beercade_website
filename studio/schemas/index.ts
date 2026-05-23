@@ -7,7 +7,7 @@ import homepage from "./homepage";
 import functionEnquiry from "./functionEnquiry";
 import testimonial from "./testimonial";
 
-export default [
+const schemaTypes = [
   machine,
   event,
   functionPackage,
@@ -17,3 +17,5 @@ export default [
   functionEnquiry,
   testimonial,
 ];
+
+export default schemaTypes;

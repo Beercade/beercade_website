@@ -10,17 +10,26 @@ import { EventCard } from "@/components/event/EventCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { CTAButton } from "@/components/ui/CTAButton";
 import { Container } from "@/components/ui/Container";
+import dynamic from "next/dynamic";
+import { LocalBusinessJsonLd } from "@/components/seo/LocalBusinessJsonLd";
+
+const ExitIntentPopup = dynamic(
+  () => import("@/components/newsletter/ExitIntentPopup").then((m) => m.ExitIntentPopup),
+  { ssr: false }
+);
 
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const [homepage, testimonials] = await Promise.all([
+  const [homepage, testimonials, openingHours] = await Promise.all([
     sanityClient.fetch(homepageQuery),
     sanityClient.fetch(homepageTestimonialsQuery),
+    sanityClient.fetch(openingHoursQuery).catch(() => null),
   ]);
 
   return (
     <>
+      <LocalBusinessJsonLd openingHours={openingHours} />
       {/* Hero */}
       <HeroLoop
         videoUrl={homepage?.heroVideoUrl}
@@ -161,6 +170,8 @@ export default async function HomePage() {
           </div>
         </Container>
       </section>
+
+      <ExitIntentPopup />
     </>
   );
 }

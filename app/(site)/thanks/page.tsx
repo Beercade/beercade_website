@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { CTAButton } from "@/components/ui/CTAButton";
 import { Container } from "@/components/ui/Container";
+import { TrackEvent } from "@/components/analytics/TrackEvent";
 
 export const metadata: Metadata = {
   title: "Enquiry received",
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
 export default function ThanksPage() {
   return (
     <Container className="flex min-h-[60vh] flex-col items-center justify-center gap-6 py-24 text-center">
+      <TrackEvent name="function-enquiry-submitted" />
       <p className="font-accent text-xs text-high-score-orange">Done.</p>
       <h1 className="font-display text-4xl font-bold text-crema md:text-5xl">
         Enquiry received.

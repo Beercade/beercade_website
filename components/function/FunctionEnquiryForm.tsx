@@ -238,6 +238,7 @@ export function FunctionEnquiryForm() {
           id="preferredTime"
           {...register("preferredTime")}
           aria-invalid={!!errors.preferredTime}
+          aria-describedby={errors.preferredTime ? "preferredTime-error" : undefined}
           className={inputBase}
         >
           <option value="">Select&hellip;</option>
@@ -261,6 +262,7 @@ export function FunctionEnquiryForm() {
           id="occasion"
           {...register("occasion")}
           aria-invalid={!!errors.occasion}
+          aria-describedby={errors.occasion ? "occasion-error" : undefined}
           className={inputBase}
         >
           <option value="">Select&hellip;</option>
@@ -282,6 +284,7 @@ export function FunctionEnquiryForm() {
           id="drinksStyle"
           {...register("drinksStyle")}
           aria-invalid={!!errors.drinksStyle}
+          aria-describedby={errors.drinksStyle ? "drinksStyle-error" : undefined}
           className={inputBase}
         >
           <option value="">Select&hellip;</option>

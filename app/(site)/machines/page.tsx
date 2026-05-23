@@ -4,7 +4,13 @@ import { allMachinesQuery } from "@/lib/sanity/queries";
 import { MachineCard } from "@/components/machine/MachineCard";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Container } from "@/components/ui/Container";
+import dynamic from "next/dynamic";
 import type { SanityImageSource } from "@sanity/image-url";
+
+const ExitIntentPopup = dynamic(
+  () => import("@/components/newsletter/ExitIntentPopup").then((m) => m.ExitIntentPopup),
+  { ssr: false }
+);
 
 export const revalidate = 60;
 
@@ -53,6 +59,8 @@ export default async function MachinesPage() {
           </p>
         )}
       </Container>
+
+      <ExitIntentPopup />
     </div>
   );
 }
