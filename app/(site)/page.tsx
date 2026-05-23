@@ -1,10 +1,166 @@
-export default function HomePage() {
+import { sanityClient } from "@/lib/sanity/client";
+import {
+  homepageQuery,
+  homepageTestimonialsQuery,
+  openingHoursQuery,
+} from "@/lib/sanity/queries";
+import { HeroLoop } from "@/components/hero/HeroLoop";
+import { MachineCard } from "@/components/machine/MachineCard";
+import { EventCard } from "@/components/event/EventCard";
+import { SectionHeading } from "@/components/ui/SectionHeading";
+import { CTAButton } from "@/components/ui/CTAButton";
+import { Container } from "@/components/ui/Container";
+
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const [homepage, testimonials] = await Promise.all([
+    sanityClient.fetch(homepageQuery),
+    sanityClient.fetch(homepageTestimonialsQuery),
+  ]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <p className="font-display text-2xl text-crema">
-        {/* PLACEHOLDER: home page — wired to Sanity in step 4 */}
-        Beercade, Redfern.
-      </p>
-    </div>
+    <>
+      {/* Hero */}
+      <HeroLoop
+        videoUrl={homepage?.heroVideoUrl}
+        poster={homepage?.heroPoster}
+        headline={homepage?.heroHeadline}
+        subline={homepage?.heroSubline}
+        ctaLabel={homepage?.primaryCtaLabel}
+        ctaTarget={homepage?.primaryCtaTarget}
+      />
+
+      {/* Machines teaser — 6 featured */}
+      {homepage?.featuredMachines?.length > 0 && (
+        <section className="py-20" aria-labelledby="machines-heading">
+          <Container>
+            <div className="mb-10 flex items-end justify-between gap-4">
+              <SectionHeading as="h2">
+                <span id="machines-heading">
+                  {/* FILLME: in-voice machines section heading */}
+                  The machines.
+                </span>
+              </SectionHeading>
+              <CTAButton href="/machines" variant="ghost" className="shrink-0">
+                See all
+              </CTAButton>
+            </div>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+              {homepage.featuredMachines
+                .slice(0, 6)
+                .map(
+                  (machine: {
+                    _id: string;
+                    name: string;
+                    slug: { current: string };
+                    type: string;
+                    status: "working" | "maintenance" | "down";
+                    photo: { alt?: string };
+                  }) => (
+                    <MachineCard key={machine._id} {...machine} />
+                  )
+                )}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* What's on — 3 upcoming events */}
+      {homepage?.featuredEvents?.length > 0 && (
+        <section className="bg-tilt-purple/10 py-20" aria-labelledby="events-heading">
+          <Container>
+            <div className="mb-10 flex items-end justify-between gap-4">
+              <SectionHeading as="h2">
+                <span id="events-heading">
+                  {/* FILLME: in-voice events section heading */}
+                  What&rsquo;s on.
+                </span>
+              </SectionHeading>
+              <CTAButton href="/whats-on" variant="ghost" className="shrink-0">
+                Full calendar
+              </CTAButton>
+            </div>
+            <div className="grid gap-6 md:grid-cols-3">
+              {homepage.featuredEvents
+                .slice(0, 3)
+                .map(
+                  (event: {
+                    _id: string;
+                    title: string;
+                    slug: { current: string };
+                    kicker?: string;
+                    kind: string;
+                    startDate: string;
+                    status: "upcoming" | "live" | "wrapped" | "cancelled";
+                    hero?: { alt?: string } | null;
+                  }) => (
+                    <EventCard key={event._id} {...event} />
+                  )
+                )}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* Function strip */}
+      <section className="py-20" aria-labelledby="functions-heading">
+        <Container>
+          <div className="flex flex-col gap-8 md:flex-row md:items-center md:gap-16">
+            <div className="flex-1 space-y-6">
+              <SectionHeading as="h2" kicker="Book the room">
+                <span id="functions-heading">
+                  {/* FILLME: in-voice functions pitch headline */}
+                  Your next function, sorted.
+                </span>
+              </SectionHeading>
+              <p className="font-body text-lg text-crema/70">
+                {/* FILLME: in-voice functions pitch body — one paragraph */}
+              </p>
+              {testimonials?.[0] && (
+                <blockquote className="border-l-2 border-high-score-orange pl-4">
+                  <p className="font-body text-base italic text-crema/80">
+                    &ldquo;{testimonials[0].quote}&rdquo;
+                  </p>
+                  {testimonials[0].attribution && (
+                    <footer className="mt-2 font-body text-sm text-crema/50">
+                      — {testimonials[0].attribution}
+                      {testimonials[0].context && (
+                        <>, {testimonials[0].context}</>
+                      )}
+                    </footer>
+                  )}
+                </blockquote>
+              )}
+              <CTAButton href="/functions" variant="primary" className="text-sm">
+                Book a function
+              </CTAButton>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Find us strip */}
+      <section className="border-t border-tilt-purple/30 bg-after-dark py-12" aria-labelledby="find-us-heading">
+        <Container>
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2
+                id="find-us-heading"
+                className="font-display text-xl font-bold text-crema"
+              >
+                113 Regent Street, Redfern.
+              </h2>
+              <p className="mt-1 font-body text-sm text-crema/60">
+                Two minutes from Redfern Station.
+              </p>
+            </div>
+            <CTAButton href="/find-us" variant="secondary">
+              Find us
+            </CTAButton>
+          </div>
+        </Container>
+      </section>
+    </>
   );
 }
