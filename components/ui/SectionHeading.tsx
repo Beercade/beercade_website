@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils/cn";
 
 interface SectionHeadingProps {
-  as?: "h2" | "h3";
+  as?: "h1" | "h2" | "h3";
   children: React.ReactNode;
   className?: string;
   kicker?: string;

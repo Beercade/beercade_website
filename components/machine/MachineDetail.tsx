@@ -1,0 +1,124 @@
+import Image from "next/image";
+import { urlFor } from "@/lib/sanity/image";
+import { StatusPill } from "@/components/ui/StatusPill";
+import { CTAButton } from "@/components/ui/CTAButton";
+import { Container } from "@/components/ui/Container";
+import type { SanityImageSource } from "@sanity/image-url";
+
+interface HighScore {
+  value?: string;
+  holder?: string;
+  setOn?: string;
+}
+
+interface MachineDetailProps {
+  name: string;
+  type: string;
+  manufacturer?: string | null;
+  year?: number | null;
+  status: "working" | "maintenance" | "down";
+  photo: SanityImageSource & { alt?: string };
+  description?: string | null;
+  highScore?: HighScore | null;
+}
+
+export function MachineDetail({
+  name,
+  type,
+  manufacturer,
+  year,
+  status,
+  photo,
+  description,
+  highScore,
+}: MachineDetailProps) {
+  return (
+    <article>
+      {/* Hero image */}
+      <div className="relative aspect-[16/7] w-full overflow-hidden bg-after-dark">
+        <Image
+          src={urlFor(photo).width(1280).height(560).auto("format").url()}
+          alt={photo.alt ?? name}
+          fill
+          priority
+          className="object-cover opacity-80"
+          sizes="100vw"
+        />
+      </div>
+
+      <Container className="py-12">
+        <div className="grid gap-12 md:grid-cols-[1fr_320px]">
+          {/* Main content */}
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <div className="flex flex-wrap items-center gap-3">
+                <StatusPill status={status} kind="machine" />
+                <span className="font-body text-xs uppercase tracking-widest text-crema/50">
+                  {type}
+                </span>
+                {manufacturer && (
+                  <span className="font-body text-xs text-crema/40">
+                    {manufacturer}
+                    {year ? `, ${year}` : ""}
+                  </span>
+                )}
+              </div>
+              <h1 className="font-display text-5xl font-bold text-crema md:text-6xl">
+                {name}
+              </h1>
+            </div>
+
+            {description && (
+              <p className="max-w-prose font-body text-lg leading-relaxed text-crema/80">
+                {description}
+              </p>
+            )}
+
+            {/* High score callout */}
+            {highScore?.value && (
+              <div className="border border-tilt-purple/40 bg-tilt-purple/10 p-6">
+                <p className="font-accent text-xs text-high-score-orange">
+                  HI SCORE
+                </p>
+                <p className="mt-2 font-display text-4xl font-bold text-crema">
+                  {highScore.value}
+                </p>
+                {highScore.holder && (
+                  <p className="mt-1 font-body text-sm text-crema/60">
+                    {highScore.holder}
+                    {highScore.setOn && (
+                      <>
+                        {" "}
+                        &mdash;{" "}
+                        {new Date(highScore.setOn).toLocaleDateString("en-AU", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })}
+                      </>
+                    )}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar CTAs */}
+          <aside className="space-y-4">
+            <div className="border border-tilt-purple/30 bg-last-train-purple p-6 space-y-4">
+              <p className="font-body text-sm text-crema/70">
+                See what&rsquo;s on next, or book the room around this machine.
+              </p>
+              <CTAButton href="/whats-on" variant="secondary" className="w-full">
+                See what&rsquo;s on
+              </CTAButton>
+              <CTAButton href="/functions" variant="primary" className="w-full">
+                Book a function
+              </CTAButton>
+            </div>
+          </aside>
+        </div>
+      </Container>
+    </article>
+  );
+}
