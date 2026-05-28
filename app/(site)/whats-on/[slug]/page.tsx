@@ -12,9 +12,9 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const events = await sanityClient.fetch<{ slug: { current: string } }[]>(
-    upcomingEventsQuery
-  );
+  const events = await sanityClient
+    .fetch<{ slug: { current: string } }[]>(upcomingEventsQuery)
+    .catch(() => []);
   return events.map((e) => ({ slug: e.slug.current }));
 }
 

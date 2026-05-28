@@ -12,9 +12,9 @@ interface PageProps {
 }
 
 export async function generateStaticParams() {
-  const machines = await sanityClient.fetch<{ slug: { current: string } }[]>(
-    allMachinesQuery
-  );
+  const machines = await sanityClient
+    .fetch<{ slug: { current: string } }[]>(allMachinesQuery)
+    .catch(() => []);
   return machines.map((m) => ({ slug: m.slug.current }));
 }
 
