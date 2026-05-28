@@ -16,9 +16,9 @@
   --color-action: var(--color-high-score-orange);
   --color-text-muted: rgb(247 239 227 / 0.72);
 
-  /* Type */
-  --font-display: var(--font-space-grotesk);
-  --font-body: var(--font-inter);
+  /* Type — display/body via Adobe Fonts (Typekit kit xel4rnf), accent via next/font/google */
+  --font-display: "gear", system-ui, sans-serif;
+  --font-body: "stratum", system-ui, sans-serif;
   --font-accent: var(--font-press-start);
 
   /* Spacing rhythm */

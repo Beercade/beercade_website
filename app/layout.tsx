@@ -1,21 +1,7 @@
 import type { Metadata } from "next";
-import { Space_Grotesk, Inter, Press_Start_2P } from "next/font/google";
+import { Press_Start_2P } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import "@/styles/globals.css";
-
-const spaceGrotesk = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["600", "700"],
-  variable: "--font-space-grotesk",
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-inter",
-  display: "swap",
-});
 
 const pressStart = Press_Start_2P({
   subsets: ["latin"],
@@ -42,12 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${spaceGrotesk.variable} ${inter.variable} ${pressStart.variable}`}
-    >
+    <html lang="en" className={pressStart.variable}>
       <head>
         <link rel="preconnect" href="https://cdn.sanity.io" />
+        <link rel="preconnect" href="https://use.typekit.net" crossOrigin="" />
+        <link rel="stylesheet" href="https://use.typekit.net/xel4rnf.css" />
       </head>
       <body>
         {children}
