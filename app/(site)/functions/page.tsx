@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+
+export const dynamic = "force-dynamic";
+
 import { sanityClient } from "@/lib/sanity/client";
 import {
   functionPackagesQuery,
@@ -38,8 +41,8 @@ interface Testimonial {
 
 export default async function FunctionsPage() {
   const [packages, testimonials] = await Promise.all([
-    sanityClient.fetch<Package[]>(functionPackagesQuery),
-    sanityClient.fetch<Testimonial[]>(functionTestimonialsQuery),
+    sanityClient.fetch<Package[]>(functionPackagesQuery).catch(() => []),
+    sanityClient.fetch<Testimonial[]>(functionTestimonialsQuery).catch(() => []),
   ]);
 
   return (
