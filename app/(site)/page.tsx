@@ -22,8 +22,8 @@ export const revalidate = 60;
 
 export default async function HomePage() {
   const [homepage, testimonials, openingHours] = await Promise.all([
-    sanityClient.fetch(homepageQuery),
-    sanityClient.fetch(homepageTestimonialsQuery),
+    sanityClient.fetch(homepageQuery).catch(() => null),
+    sanityClient.fetch(homepageTestimonialsQuery).catch(() => []),
     sanityClient.fetch(openingHoursQuery).catch(() => null),
   ]);
 
@@ -32,6 +32,7 @@ export default async function HomePage() {
       <LocalBusinessJsonLd openingHours={openingHours} />
       {/* Hero */}
       <HeroLoop
+        slides={homepage?.heroSlides}
         videoUrl={homepage?.heroVideoUrl}
         poster={homepage?.heroPoster}
         headline={homepage?.heroHeadline}

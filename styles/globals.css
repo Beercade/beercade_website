@@ -48,3 +48,30 @@ body {
   outline: 2px solid var(--color-crema);
   outline-offset: 2px;
 }
+
+/* Ken Burns variants — slow zoom/pan for hero carousel still images */
+@keyframes kenBurns1 {
+  from { transform: scale(1)    translate(0%, 0%); }
+  to   { transform: scale(1.12) translate(-2%, -1%); }
+}
+@keyframes kenBurns2 {
+  from { transform: scale(1)    translate(0%, 0%); }
+  to   { transform: scale(1.12) translate(2%, 1%); }
+}
+@keyframes kenBurns3 {
+  from { transform: scale(1.08) translate(1.5%, 1%); }
+  to   { transform: scale(1)    translate(0%, 0%); }
+}
+@keyframes kenBurns4 {
+  from { transform: scale(1)    translate(1%, 0%); }
+  to   { transform: scale(1.1)  translate(-1%, -1.5%); }
+}
+
+.kb-1 { animation: kenBurns1 10s ease-in-out forwards; }
+.kb-2 { animation: kenBurns2 10s ease-in-out forwards; }
+.kb-3 { animation: kenBurns3 10s ease-in-out forwards; }
+.kb-4 { animation: kenBurns4 10s ease-in-out forwards; }
+
+@media (prefers-reduced-motion: reduce) {
+  .kb-1, .kb-2, .kb-3, .kb-4 { animation: none; }
+}

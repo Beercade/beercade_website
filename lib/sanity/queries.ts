@@ -1,5 +1,10 @@
 export const homepageQuery = /* groq */ `*[_type == "homepage"][0]{
-  heroHeadline, heroSubline, heroVideoUrl, heroPoster, primaryCtaLabel, primaryCtaTarget,
+  heroHeadline, heroSubline, primaryCtaLabel, primaryCtaTarget,
+  "heroSlides": heroSlides[]{
+    _key, mediaType, videoUrl,
+    "image": image{ ..., "alt": alt, asset->{ _id, url, metadata{ lqip, dimensions } } }
+  },
+  heroVideoUrl, heroPoster,
   "featuredMachines": featuredMachines[]->{ _id, name, slug, type, photo, status },
   "featuredEvents": featuredEvents[]->{ _id, title, slug, kicker, kind, startDate, status, hero }
 }`;
