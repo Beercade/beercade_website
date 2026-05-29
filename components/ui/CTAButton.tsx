@@ -16,7 +16,7 @@ interface CTAButtonProps {
 
 const variantClasses: Record<Variant, string> = {
   primary:
-    "bg-high-score-orange text-after-dark hover:opacity-90 focus-visible:ring-2 focus-visible:ring-high-score-orange focus-visible:ring-offset-2 focus-visible:ring-offset-last-train-purple",
+    "bg-high-score-orange text-crema hover:opacity-90 focus-visible:ring-2 focus-visible:ring-high-score-orange focus-visible:ring-offset-2 focus-visible:ring-offset-last-train-purple",
   secondary:
     "border border-crema text-crema hover:bg-crema hover:text-after-dark focus-visible:ring-2 focus-visible:ring-crema focus-visible:ring-offset-2 focus-visible:ring-offset-last-train-purple",
   ghost:
