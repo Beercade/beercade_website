@@ -34,6 +34,22 @@ export default defineType({
     }),
     defineField({ name: "manufacturer", title: "Manufacturer", type: "string" }),
     defineField({ name: "year", title: "Year", type: "number" }),
+    // ── OPDB sync fields (owned by the nightly cron, not by staff) ──────────
+    defineField({
+      name: "opdbId",
+      title: "OPDB ID",
+      type: "string",
+      readOnly: true,
+      description:
+        "Open Pinball Database identifier. Set automatically by the nightly sync from the machine name. If a machine never resolves, the name probably doesn't match OPDB — rename to the canonical title or leave blank (manufacturer/year then stay staff-edited).",
+    }),
+    defineField({
+      name: "opdbLastSynced",
+      title: "OPDB last synced",
+      type: "datetime",
+      readOnly: true,
+      description: "When the OPDB sync last reconciled this machine. Audit only.",
+    }),
     defineField({
       name: "status",
       title: "Status",

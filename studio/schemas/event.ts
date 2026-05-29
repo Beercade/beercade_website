@@ -121,5 +121,29 @@ export default defineType({
         ],
       },
     }),
+    // ── Square prepay switch (finals only) ──────────────────────────────────
+    defineField({
+      name: "prepayRequired",
+      title: "Prepay required (Square)",
+      type: "boolean",
+      initialValue: false,
+      description:
+        "When on, the signup flow takes the entry fee through Square before registering the player. Leave off for bar-door nights.",
+    }),
+    defineField({
+      name: "entryFeeAud",
+      title: "Entry fee (AUD)",
+      type: "number",
+      initialValue: 15,
+      description:
+        "Amount charged at prepay. Includes the drink token per the Run of Show.",
+    }),
+    defineField({
+      name: "matchplayTournamentId",
+      title: "Match Play tournament id",
+      type: "string",
+      description:
+        "The Match Play tournament this event maps to. Join key for standings and for post-payment registration.",
+    }),
   ],
 });
