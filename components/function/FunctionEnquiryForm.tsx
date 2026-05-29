@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -49,11 +49,11 @@ function Label({
 const inputBase =
   "w-full rounded-sm border border-tilt-purple/40 bg-last-train-purple px-4 py-3 font-body text-sm text-crema placeholder:text-crema/30 focus:border-tilt-purple focus:outline-none focus:ring-1 focus:ring-tilt-purple aria-invalid:border-high-score-orange";
 
+type ActionResult = { ok: false; errors: Record<string, string[]> } | null;
+
 export function FunctionEnquiryForm() {
-  const [state, formAction, isPending] = useActionState(
-    submitFunctionEnquiry,
-    null
-  );
+  const [state, setState] = useState<ActionResult>(null);
+  const [isPending, startTransition] = useTransition();
 
   const turnstileRef = useRef<HTMLDivElement>(null);
   const turnstileTokenRef = useRef<HTMLInputElement>(null);
@@ -113,8 +113,17 @@ export function FunctionEnquiryForm() {
 
   const formError = state?.ok === false ? state.errors._form?.[0] : null;
 
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    startTransition(async () => {
+      const result = await submitFunctionEnquiry(state, formData);
+      setState(result);
+    });
+  }
+
   return (
-    <form action={formAction} noValidate className="space-y-6" id="enquire">
+    <form onSubmit={handleSubmit} noValidate className="space-y-6" id="enquire">
       {/* Honeypot — hidden from real users */}
       <input
         type="text"
@@ -122,7 +131,7 @@ export function FunctionEnquiryForm() {
         tabIndex={-1}
         autoComplete="off"
         aria-hidden="true"
-        className="absolute left-[-9999px] h-0 w-0 overflow-hidden"
+        className="absolute -left-2499.75 h-0 w-0 overflow-hidden"
       />
 
       {/* Turnstile token (populated by widget callback) */}

@@ -44,8 +44,8 @@ const DAY_ORDER = ["Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default async function WhatsOnPage() {
   const [events, standingNights] = await Promise.all([
-    sanityClient.fetch<Event[]>(upcomingEventsQuery),
-    sanityClient.fetch<WhatsOn[]>(whatsOnQuery),
+    sanityClient.fetch<Event[]>(upcomingEventsQuery).catch(() => []),
+    sanityClient.fetch<WhatsOn[]>(whatsOnQuery).catch(() => []),
   ]);
 
   const sorted = [...standingNights].sort(
@@ -89,7 +89,7 @@ export default async function WhatsOnPage() {
               {sorted.map((night) => (
                 <div
                   key={night._id}
-                  className="min-w-[200px] flex-1 border border-tilt-purple/30 bg-last-train-purple p-5"
+                  className="min-w-50 flex-1 border border-tilt-purple/30 bg-last-train-purple p-5"
                 >
                   <p className="font-body text-xs uppercase tracking-widest text-high-score-orange">
                     {night.dayOfWeek}

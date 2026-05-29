@@ -5,25 +5,7 @@ export const alt = "Beercade — Arcade bar in Redfern";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-async function loadSpaceGroteskBold(): Promise<ArrayBuffer | null> {
-  try {
-    const css = await fetch(
-      "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap",
-      { headers: { "User-Agent": "Mozilla/5.0" } }
-    ).then((r) => r.text());
-
-    const url = css.match(/src: url\((.+?)\) format\('woff2'\)/)?.[1];
-    if (!url) return null;
-
-    return fetch(url).then((r) => r.arrayBuffer());
-  } catch {
-    return null;
-  }
-}
-
-export default async function Image() {
-  const fontData = await loadSpaceGroteskBold();
-
+export default function Image() {
   return new ImageResponse(
     (
       <div
@@ -43,7 +25,7 @@ export default async function Image() {
             color: "#F7EFE3",
             fontSize: 88,
             fontWeight: 700,
-            fontFamily: fontData ? "Space Grotesk" : "sans-serif",
+            fontFamily: "sans-serif",
             letterSpacing: "-2px",
             lineHeight: 1,
           }}
@@ -55,7 +37,7 @@ export default async function Image() {
             color: "#F7EFE3",
             opacity: 0.6,
             fontSize: 28,
-            fontFamily: fontData ? "Space Grotesk" : "sans-serif",
+            fontFamily: "sans-serif",
             marginTop: 16,
           }}
         >
@@ -63,11 +45,6 @@ export default async function Image() {
         </div>
       </div>
     ),
-    {
-      ...size,
-      fonts: fontData
-        ? [{ name: "Space Grotesk", data: fontData, weight: 700 }]
-        : [],
-    }
+    { ...size }
   );
 }

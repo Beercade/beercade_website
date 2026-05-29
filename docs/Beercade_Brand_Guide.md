@@ -2,7 +2,7 @@
 
 Regent Street, Redfern NSW · v1.0 · May 2026
 
-Owner: Beercade Australia
+Owner: Roger Robertson
 Author: Brand & Marketing Partner
 Status: Working document — supersedes all prior brand collateral except the existing wordmark and mascot.
 
@@ -181,7 +181,7 @@ The brand voice is the single highest-leverage element in this guide. It runs ac
 
 - **Instagram Reels and posts:** short, punchy, specific. One sentence per slide. Machine names by name. Mild profanity allowed when it's earning the laugh.
 - **Instagram Stories:** functional and urgent. Times, dates, machine names. No hashtags.
-- **Email (welcome, monthly, function follow-up):** conversational, like an email from a mate who runs the venue. First-person singular *I* on owner-signed emails; first-person plural *we* on operations emails.
+- **Email (welcome, monthly, function follow-up):** conversational, like an email from a mate who runs the venue. First-person singular *I* on Roger-signed emails; first-person plural *we* on operations emails.
 - **Function quotes and proposals:** still in voice, but the deadpan is dialled down to professional. Sarah needs to forward this to her boss; it has to survive a forward.
 - **Venue signage (table cards, blackboards, washroom doors):** dryly literal. "Tap left. Tap right. The middle one is decorative." Permission to be funny if the joke earns its place.
 

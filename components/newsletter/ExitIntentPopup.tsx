@@ -95,7 +95,7 @@ export function ExitIntentPopup() {
           type="button"
           onClick={() => setVisible(false)}
           aria-label="Close"
-          className="absolute right-4 top-4 font-body text-sm text-crema/40 hover:text-crema focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tilt-purple"
+          className="absolute right-4 top-4 font-body text-sm text-crema/40 hover:text-crema focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tilt-purple"
         >
           ✕
         </button>

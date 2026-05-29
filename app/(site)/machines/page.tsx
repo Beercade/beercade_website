@@ -31,7 +31,7 @@ interface Machine {
 }
 
 export default async function MachinesPage() {
-  const machines: Machine[] = await sanityClient.fetch(allMachinesQuery);
+  const machines: Machine[] = await sanityClient.fetch(allMachinesQuery).catch(() => []);
 
   return (
     <div className="py-16">
