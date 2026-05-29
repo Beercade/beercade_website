@@ -32,7 +32,8 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="" />
-        <link rel="stylesheet" href="https://use.typekit.net/xel4rnf.css" />
+        {/* precedence required for Next.js App Router to hoist this stylesheet */}
+        <link rel="stylesheet" href="https://use.typekit.net/xel4rnf.css" precedence="default" />
       </head>
       <body>
         {children}
