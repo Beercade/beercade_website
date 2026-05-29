@@ -75,3 +75,17 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .kb-1, .kb-2, .kb-3, .kb-4 { animation: none; }
 }
+
+/* Hero texture overlays — faint grid + film grain for depth behind the carousel */
+.grid-overlay {
+  background-image:
+    linear-gradient(rgb(247 239 227 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(247 239 227 / 0.035) 1px, transparent 1px);
+  background-size: 36px 36px;
+}
+
+.hero-noise {
+  background-image: radial-gradient(rgb(247 239 227 / 0.05) 0.5px, transparent 0.5px);
+  background-size: 8px 8px;
+  opacity: 0.07;
+}

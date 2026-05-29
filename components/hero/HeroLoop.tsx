@@ -41,6 +41,8 @@ export function HeroLoop({
   const [reducedMotion, setReducedMotion] = useState(false);
   const [activeIdx, setActiveIdx] = useState(0);
   const [fadingIdx, setFadingIdx] = useState<number | null>(null);
+  const [offsetY, setOffsetY] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Build a normalised slide list — fall back to legacy single-media props
@@ -78,6 +80,35 @@ export function HeroLoop({
     };
   }, [activeIdx, reducedMotion, hasMultiple, normalisedSlides.length]);
 
+  // Scroll-driven parallax (vanilla, rAF-throttled). Skipped under reduced motion.
+  useEffect(() => {
+    if (reducedMotion) {
+      setOffsetY(0);
+      return;
+    }
+
+    let frame = 0;
+    const updateViewport = () => setIsMobile(window.innerWidth < 768);
+    const onScroll = () => {
+      if (frame) return;
+      frame = window.requestAnimationFrame(() => {
+        setOffsetY(window.scrollY);
+        frame = 0;
+      });
+    };
+
+    updateViewport();
+    onScroll();
+    window.addEventListener("resize", updateViewport);
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      if (frame) window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", updateViewport);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [reducedMotion]);
+
   const goTo = (idx: number) => {
     if (idx === activeIdx) return;
     if (timerRef.current) clearTimeout(timerRef.current);
@@ -85,6 +116,16 @@ export function HeroLoop({
     setActiveIdx(idx);
     setTimeout(() => setFadingIdx(null), FADE_DURATION);
   };
+
+  // Cap the scroll input so the hero settles rather than drifting forever.
+  const capped = Math.min(offsetY, 1600);
+  const mediaTranslate = capped * (isMobile ? 0.14 : 0.26);
+  const gradientTranslate = capped * (isMobile ? 0.22 : 0.42);
+  const glowTranslate = capped * (isMobile ? 0.1 : 0.18);
+  const contentTranslate = capped * (isMobile ? 0.12 : 0.2);
+  const contentOpacity = 1 - Math.min(capped / 520, 1);
+  const scrollScale =
+    1 + Math.min(capped * (isMobile ? 0.00006 : 0.00012), isMobile ? 0.025 : 0.06);
 
   return (
     <section
@@ -107,6 +148,8 @@ export function HeroLoop({
               opacity: isActive ? 1 : 0,
               transitionDuration: `${FADE_DURATION}ms`,
               zIndex: isActive ? 1 : 0,
+              transform: `translateY(${mediaTranslate}px) scale(${scrollScale})`,
+              willChange: "transform, opacity",
             }}
             aria-hidden={!isActive}
           >
@@ -135,6 +178,32 @@ export function HeroLoop({
         );
       })}
 
+      {/* Depth gradient — darkens toward the bottom so content stays legible */}
+      <div
+        className="absolute inset-0 z-[2]"
+        style={{
+          transform: `translateY(${gradientTranslate}px)`,
+          background:
+            "linear-gradient(to bottom, rgb(20 16 26 / 0.10), rgb(20 16 26 / 0.35) 42%, rgb(20 16 26 / 0.78) 100%)",
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Brand glow accents — Tilt Purple + High Score Orange, parallaxed */}
+      <div
+        className="absolute inset-0 z-[2]"
+        style={{
+          transform: `translateY(${glowTranslate}px) scale(1.06)`,
+          background:
+            "radial-gradient(circle at 72% 28%, rgb(122 60 226 / 0.30), transparent 32%), radial-gradient(circle at 24% 76%, rgb(255 94 31 / 0.20), transparent 30%)",
+        }}
+        aria-hidden="true"
+      />
+
+      {/* Grid + noise texture */}
+      <div className="grid-overlay absolute inset-0 z-[2] opacity-30" aria-hidden="true" />
+      <div className="hero-noise absolute inset-0 z-[2]" aria-hidden="true" />
+
       {/* Scanline overlay */}
       <div
         className="absolute inset-0 z-[2]"
@@ -146,7 +215,14 @@ export function HeroLoop({
       />
 
       {/* Content */}
-      <div className="relative z-[3] w-full pb-16 pt-24">
+      <div
+        className="relative z-[3] w-full pb-16 pt-24"
+        style={{
+          transform: `translateY(${-contentTranslate}px)`,
+          opacity: contentOpacity,
+          willChange: "transform, opacity",
+        }}
+      >
         <div className="mx-auto w-full max-w-layout px-(--grid-gutter-mobile) md:px-(--grid-gutter)">
           <h1 className="max-w-3xl font-display text-5xl font-bold text-crema md:text-7xl lg:text-8xl">
             {headline ?? (
