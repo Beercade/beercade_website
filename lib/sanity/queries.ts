@@ -2,6 +2,7 @@ export const homepageQuery = /* groq */ `*[_type == "homepage"][0]{
   heroHeadline, heroSubline, primaryCtaLabel, primaryCtaTarget,
   "heroSlides": heroSlides[]{
     _key, mediaType, videoUrl,
+    "videoFileUrl": videoFile.asset->url,
     "image": image{ ..., "alt": alt, asset->{ _id, url, metadata{ lqip, dimensions } } }
   },
   heroVideoUrl, heroPoster,

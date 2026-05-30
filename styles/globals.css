@@ -19,9 +19,10 @@
   /* Type — display/heading/body via Adobe Fonts (Typekit kit xel4rnf), accent via next/font/google */
   /* Gear Wide is reserved for titles (H1, hero, wordmark, big numerals). */
   --font-display: "gear-wide", system-ui, sans-serif;
-  /* Obviously (Normal width) carries section + card headings (H2/H3). */
-  /* Swap "obviously" for "obviously-narrow" / "obviously-wide" to retune width. */
-  --font-heading: "obviously", system-ui, sans-serif;
+  /* Obviously Narrow carries section + card headings (H2/H3). */
+  /* Narrow ships Semibold (600) + Bold (700) — matches the font-semibold/font-bold heading classes. */
+  /* Swap to "obviously" (Normal, 400/600 only) or "obviously-condensed" to retune width. */
+  --font-heading: "obviously-narrow", system-ui, sans-serif;
   --font-body: "stratum-2-web", system-ui, sans-serif;
   --font-accent: var(--font-press-start);
 

@@ -13,6 +13,7 @@
 # env files — never commit
 .env.local
 .env*.local
+import.env
 
 # misc
 .DS_Store

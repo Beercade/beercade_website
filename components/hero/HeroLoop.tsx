@@ -12,6 +12,7 @@ export interface HeroSlide {
   _key: string;
   mediaType: "image" | "video";
   videoUrl?: string | null;
+  videoFileUrl?: string | null;
   image?: (SanityImageSource & { alt?: string }) | null;
 }
 
@@ -153,9 +154,11 @@ export function HeroLoop({
             }}
             aria-hidden={!isActive}
           >
-            {slide.mediaType === "video" && slide.videoUrl && !reducedMotion ? (
+            {slide.mediaType === "video" &&
+            (slide.videoFileUrl || slide.videoUrl) &&
+            !reducedMotion ? (
               <video
-                src={slide.videoUrl}
+                src={slide.videoFileUrl ?? slide.videoUrl ?? undefined}
                 autoPlay
                 loop
                 muted

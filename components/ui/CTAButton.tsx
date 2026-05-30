@@ -24,7 +24,7 @@ const variantClasses: Record<Variant, string> = {
 };
 
 const base =
-  "inline-flex items-center justify-center rounded-sm px-6 py-3 font-display text-sm font-semibold uppercase tracking-tight transition-all duration-[var(--motion-fast)] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center rounded-sm px-6 py-3 font-heading text-sm font-semibold uppercase tracking-tight transition-all duration-[var(--motion-fast)] focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50";
 
 export function CTAButton({
   href,

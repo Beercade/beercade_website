@@ -24,7 +24,7 @@ export default defineType({
               options: {
                 list: [
                   { title: "Image", value: "image" },
-                  { title: "Video (URL)", value: "video" },
+                  { title: "Video", value: "video" },
                 ],
                 layout: "radio",
               },
@@ -47,8 +47,17 @@ export default defineType({
               ],
             }),
             defineField({
+              name: "videoFile",
+              title: "Video file (upload — served from Sanity's CDN)",
+              description:
+                "Preferred. Upload a muted, looping mp4 or webm (keep it short and compressed). Used in place of the URL below if both are set.",
+              type: "file",
+              options: { accept: "video/mp4,video/webm" },
+              hidden: ({ parent }) => parent?.mediaType !== "video",
+            }),
+            defineField({
               name: "videoUrl",
-              title: "Video URL (mp4 or webm, hosted externally)",
+              title: "Video URL (fallback — external mp4 or webm)",
               type: "url",
               hidden: ({ parent }) => parent?.mediaType !== "video",
             }),
@@ -57,13 +66,14 @@ export default defineType({
             select: {
               mediaType: "mediaType",
               image: "image",
+              videoFile: "videoFile.asset.originalFilename",
               videoUrl: "videoUrl",
             },
-            prepare({ mediaType, image, videoUrl }) {
+            prepare({ mediaType, image, videoFile, videoUrl }) {
               return {
                 title:
                   mediaType === "video"
-                    ? `Video — ${videoUrl ?? "no URL"}`
+                    ? `Video — ${videoFile ?? videoUrl ?? "no file"}`
                     : "Image",
                 media: image,
               };
