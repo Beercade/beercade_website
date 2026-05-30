@@ -1,13 +1,35 @@
 import { google } from "googleapis";
+import { ExternalAccountClient } from "google-auth-library";
+import { getVercelOidcToken } from "@vercel/oidc";
 import type { FunctionEnquiryInput } from "@/lib/validation/function-enquiry";
 
+// Keyless auth via Workload Identity Federation.
+// The beercade.com.au org enforces iam.disableServiceAccountKeyCreation, so we
+// federate Vercel's per-invocation OIDC token to Google STS and impersonate the
+// (keyless) service account rather than shipping a downloaded private key.
+// Setup + env vars: https://vercel.com/docs/oidc/gcp
 function getCalendarClient() {
-  const auth = new google.auth.JWT({
-    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY!.replace(/\\n/g, "\n"),
-    scopes: ["https://www.googleapis.com/auth/calendar"],
+  const authClient = ExternalAccountClient.fromJSON({
+    type: "external_account",
+    audience: `//iam.googleapis.com/projects/${process.env.GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${process.env.GCP_WORKLOAD_IDENTITY_POOL_ID}/providers/${process.env.GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID}`,
+    subject_token_type: "urn:ietf:params:oauth:token-type:jwt",
+    token_url: "https://sts.googleapis.com/v1/token",
+    service_account_impersonation_url: `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${process.env.GCP_SERVICE_ACCOUNT_EMAIL}:generateAccessToken`,
+    subject_token_supplier: {
+      // Vercel injects a fresh OIDC token per invocation. Wrapped so the
+      // supplier's context arg isn't forwarded to getVercelOidcToken's options.
+      getSubjectToken: () => getVercelOidcToken(),
+    },
   });
-  return google.calendar({ version: "v3", auth });
+
+  if (!authClient) {
+    throw new Error(
+      "Failed to initialise Google ExternalAccountClient — check the GCP_* federation env vars."
+    );
+  }
+
+  authClient.scopes = ["https://www.googleapis.com/auth/calendar"];
+  return google.calendar({ version: "v3", auth: authClient });
 }
 
 const TIME_WINDOWS: Record<string, [number, number]> = {

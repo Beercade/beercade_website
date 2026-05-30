@@ -28,7 +28,7 @@ Acceptance criteria are at the bottom of this document. Build to those, not to a
 | CMS | Sanity (embedded studio in `/studio`) | Studio is genuinely usable by hospo staff after one walkthrough. Asset CDN included. Better fit than Contentful or Payload for a single-venue site with one editor. |
 | Transactional email | Resend + React Email | Clean DX, React-Email templates, free tier covers function enquiry volume comfortably. |
 | Marketing email | Kit (V4 API for custom-form submission) | Welcome sequence and newsletter template already drafted in Kit; consultant-owned. |
-| Calendar integration | Google service account against `functions@beercade.com.au` | Cleaner than per-user OAuth; consultant doesn't need to renew tokens. |
+| Calendar integration | Keyless service account via Workload Identity Federation (Vercel OIDC) | No downloaded keys (org policy blocks them) and no per-user token renewal. See §8.5. |
 | Analytics | Plausible Community Edition | Privacy-respecting, no cookie banner needed. Vercel Analytics for Web Vitals. |
 | Error monitoring | Sentry (free tier) | One broken form on a launch day would cost more than the year-one Sentry bill. |
 | Styling | Tailwind v4 | Token-driven design system maps neatly to the brand guide. |
@@ -111,9 +111,13 @@ RESEND_FROM_HELLO=hello@beercade.com.au           # internal-notification sender
 RESEND_REPLY_TO=functions@beercade.com.au         # replies thread back to the group inbox
 TEAM_INBOX=functions@beercade.com.au              # Google Group: all team members
 
-# Google service account (for Calendar API)
-GOOGLE_SERVICE_ACCOUNT_EMAIL=
-GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY=     # \n-escaped PEM string
+# Google Calendar — keyless Workload Identity Federation (Vercel OIDC); see §8.5
+# org policy iam.disableServiceAccountKeyCreation blocks downloaded SA keys
+GCP_PROJECT_ID=
+GCP_PROJECT_NUMBER=
+GCP_SERVICE_ACCOUNT_EMAIL=               # keyless SA, shared into the calendar
+GCP_WORKLOAD_IDENTITY_POOL_ID=
+GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID=
 GOOGLE_BOOKINGS_CALENDAR_ID=            # the dedicated "Beercade Bookings" calendar ID
 
 # Cloudflare Turnstile (form bot mitigation)
@@ -822,7 +826,7 @@ Before any of that, the request must pass two gates: a Cloudflare Turnstile chal
 Day-2 infra setup the consultant must complete in Google Workspace before this code is exercised against production:
 
 - Create the `functions@beercade.com.au` Google Group. Add owner + two manager-shift staff as members. Configure as **Collaborative Inbox**. Group access set to *Anyone on the web can post* so customer replies reach the group.
-- Create a calendar called **Beercade Bookings** owned by the workspace. Share with Editor access to all three team members. Share with Manager access (Make changes to events) to the service account email. Note the calendar ID (looks like `xxx@group.calendar.google.com`) for the `GOOGLE_BOOKINGS_CALENDAR_ID` env var.
+- Create a calendar called **Beercade Bookings** owned by the workspace. Share **Make changes to events** with all three team members and with the keyless service account email (`GCP_SERVICE_ACCOUNT_EMAIL`). Note the calendar ID (looks like `xxx@group.calendar.google.com`) for the `GOOGLE_BOOKINGS_CALENDAR_ID` env var. _(Created 31 May 2026; ID `c_eca3a9296250d410b444fd51b6f76547422c24b2a4b792498ef37db5f343d888@group.calendar.google.com`.)_ Auth is keyless Workload Identity Federation — see §8.5.
 - Configure each team member's Gmail with the *Send mail as* option for `functions@beercade.com.au`, so they can reply as the group rather than as themselves.
 
 ### 8.1 Client component
@@ -1069,17 +1073,26 @@ Two things to call out in this client. First, the team notification's `reply_to`
 
 `lib/google/calendar.ts`:
 
+> **Auth note (v1.2):** the beercade.com.au org enforces `iam.disableServiceAccountKeyCreation`, so downloaded service-account keys are not available. We authenticate **keyless** via Workload Identity Federation: Vercel issues a per-invocation OIDC token, Google STS exchanges it, and we impersonate a keyless service account that is shared into the calendar. Setup + env vars: https://vercel.com/docs/oidc/gcp. Requires deps `@vercel/oidc` and `google-auth-library`.
+
 ```ts
 import { google } from "googleapis";
+import { ExternalAccountClient } from "google-auth-library";
+import { getVercelOidcToken } from "@vercel/oidc";
 import type { FunctionEnquiryInput } from "@/lib/validation/function-enquiry";
 
 function getCalendarClient() {
-  const auth = new google.auth.JWT({
-    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    key: process.env.GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY!.replace(/\\n/g, "\n"),
-    scopes: ["https://www.googleapis.com/auth/calendar"],
+  const authClient = ExternalAccountClient.fromJSON({
+    type: "external_account",
+    audience: `//iam.googleapis.com/projects/${process.env.GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${process.env.GCP_WORKLOAD_IDENTITY_POOL_ID}/providers/${process.env.GCP_WORKLOAD_IDENTITY_POOL_PROVIDER_ID}`,
+    subject_token_type: "urn:ietf:params:oauth:token-type:jwt",
+    token_url: "https://sts.googleapis.com/v1/token",
+    service_account_impersonation_url: `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${process.env.GCP_SERVICE_ACCOUNT_EMAIL}:generateAccessToken`,
+    subject_token_supplier: { getSubjectToken: getVercelOidcToken },
   });
-  return google.calendar({ version: "v3", auth });
+  if (!authClient) throw new Error("Failed to init Google ExternalAccountClient — check GCP_* env vars.");
+  authClient.scopes = ["https://www.googleapis.com/auth/calendar"];
+  return google.calendar({ version: "v3", auth: authClient });
 }
 
 export async function createTentativeCalendarEvent(data: FunctionEnquiryInput): Promise<string> {
@@ -1115,7 +1128,7 @@ export async function createTentativeCalendarEvent(data: FunctionEnquiryInput): 
 }
 ```
 
-The service account must be added as a Manager (Make changes to events) of the **Beercade Bookings** calendar in Google Workspace. The calendar ID is the long string ending in `@group.calendar.google.com`, not the email address.
+The keyless service account (`GCP_SERVICE_ACCOUNT_EMAIL`) must be shared into the **Beercade Bookings** calendar with **Make changes to events**, or `events.insert` will 403. No IAM project roles are needed — calendar access comes from the share, not from IAM. The federated principal (the Vercel OIDC identity) must be granted **Service Account Token Creator** on that SA so it can impersonate it. The calendar ID is the long string ending in `@group.calendar.google.com`, not the email address.
 
 Update the server action's call site to consume the returned object: `const { id: calendarEventId, htmlLink: calendarEventUrl } = await createTentativeCalendarEvent(data);` and pass `calendarEventUrl` to `sendTeamNotification`.
 
