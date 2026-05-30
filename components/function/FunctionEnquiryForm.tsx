@@ -223,7 +223,11 @@ export function FunctionEnquiryForm() {
           <input
             id="preferredDate"
             type="date"
-            min={new Date().toISOString().slice(0, 10)}
+            // Sydney "today" as YYYY-MM-DD (not UTC) so the venue's current day
+            // is always selectable and SSR/client render the same min.
+            min={new Date().toLocaleDateString("en-CA", {
+              timeZone: "Australia/Sydney",
+            })}
             {...register("preferredDate")}
             aria-describedby={
               errors.preferredDate ? "preferredDate-error" : undefined

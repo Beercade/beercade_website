@@ -28,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={pressStart.variable}>
+    <html lang="en-AU" className={pressStart.variable}>
       <head>
         <link rel="preconnect" href="https://cdn.sanity.io" />
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="" />
