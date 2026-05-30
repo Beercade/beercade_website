@@ -1,11 +1,15 @@
 "use server";
 
+import * as Sentry from "@sentry/nextjs";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { functionEnquirySchema } from "@/lib/validation/function-enquiry";
 import { writeClient } from "@/lib/sanity/client";
-import { sendTeamNotification, sendCustomerAutoresponder } from "@/lib/resend/client";
+import {
+  sendTeamNotification,
+  sendCustomerAutoresponder,
+} from "@/lib/resend/client";
 import { createTentativeCalendarEvent } from "@/lib/google/calendar";
 import { verifyTurnstile } from "@/lib/security/turnstile";
 import { rateLimit } from "@/lib/security/rate-limit";
@@ -57,7 +61,12 @@ export async function submitFunctionEnquiry(
     await createTentativeCalendarEvent(data);
 
   // 4) Sanity archive
-  const { turnstileToken: _t, honeypot: _h, consent: _c, ...archiveData } = data;
+  const {
+    turnstileToken: _t,
+    honeypot: _h,
+    consent: _c,
+    ...archiveData
+  } = data;
   await writeClient.create({
     _type: "functionEnquiry",
     submittedAt: new Date().toISOString(),
@@ -66,11 +75,22 @@ export async function submitFunctionEnquiry(
     status: "new",
   });
 
-  // 5) Team notification to group inbox
-  await sendTeamNotification(data, calendarEventId, calendarEventUrl);
-
-  // 6) Customer autoresponder
-  await sendCustomerAutoresponder(data);
+  // 5) Team notification + 6) customer autoresponder.
+  // Non-blocking: the enquiry is already captured on the calendar and in Sanity,
+  // so an email failure is reported to Sentry rather than 500-ing the customer
+  // (which would also risk a duplicate resubmit, since this action isn't idempotent).
+  try {
+    await sendTeamNotification(data, calendarEventId, calendarEventUrl);
+  } catch (err) {
+    console.error("[function-enquiry] team notification failed:", err);
+    Sentry.captureException(err, { tags: { stage: "team-notification" } });
+  }
+  try {
+    await sendCustomerAutoresponder(data);
+  } catch (err) {
+    console.error("[function-enquiry] customer autoresponder failed:", err);
+    Sentry.captureException(err, { tags: { stage: "customer-autoresponder" } });
+  }
 
   revalidatePath("/studio");
   redirect("/thanks");

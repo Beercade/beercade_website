@@ -14,17 +14,23 @@ export async function sendTeamNotification(
   calendarEventId: string,
   calendarEventUrl?: string
 ) {
-  return getResend().emails.send({
+  const { data: sent, error } = await getResend().emails.send({
     from: `Beercade Bookings <${process.env.RESEND_FROM_HELLO!}>`,
     to: [process.env.TEAM_INBOX!],
     replyTo: data.email,
     subject: `New enquiry — ${data.name} (${data.groupSize} on ${data.preferredDate})`,
     react: FunctionEnquiryTeam({ data, calendarEventId, calendarEventUrl }),
   });
+  if (error) {
+    throw new Error(
+      `Resend team notification failed: ${error.message ?? JSON.stringify(error)}`
+    );
+  }
+  return sent;
 }
 
 export async function sendCustomerAutoresponder(data: FunctionEnquiryInput) {
-  return getResend().emails.send({
+  const { data: sent, error } = await getResend().emails.send({
     from: `Beercade <${process.env.RESEND_FROM_FUNCTIONS!}>`,
     to: data.email,
     replyTo: process.env.RESEND_REPLY_TO!,
@@ -35,4 +41,10 @@ export async function sendCustomerAutoresponder(data: FunctionEnquiryInput) {
       preferredDate: data.preferredDate,
     }),
   });
+  if (error) {
+    throw new Error(
+      `Resend customer autoresponder failed: ${error.message ?? JSON.stringify(error)}`
+    );
+  }
+  return sent;
 }
