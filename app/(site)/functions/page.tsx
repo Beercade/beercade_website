@@ -66,7 +66,7 @@ export default async function FunctionsPage() {
           <Container>
             <h2
               id="packages-heading"
-              className="mb-8 font-display text-2xl font-bold text-crema"
+              className="mb-8 font-heading text-2xl font-bold text-crema"
             >
               {/* FILLME: in-voice packages section heading */}
               What&rsquo;s included.
@@ -86,7 +86,7 @@ export default async function FunctionsPage() {
           <Container>
             <h2
               id="testimonials-heading"
-              className="mb-8 font-display text-2xl font-bold text-crema"
+              className="mb-8 font-heading text-2xl font-bold text-crema"
             >
               What groups say.
             </h2>
@@ -122,7 +122,7 @@ export default async function FunctionsPage() {
             <div className="space-y-4">
               <h2
                 id="enquire-heading"
-                className="font-display text-3xl font-bold text-crema"
+                className="font-heading text-3xl font-bold text-crema"
               >
                 {/* FILLME: in-voice form intro heading */}
                 Get in touch.

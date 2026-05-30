@@ -157,7 +157,7 @@ export default async function HomePage() {
             <div>
               <h2
                 id="find-us-heading"
-                className="font-display text-xl font-bold text-crema"
+                className="font-heading text-xl font-bold text-crema"
               >
                 113 Regent Street, Redfern.
               </h2>

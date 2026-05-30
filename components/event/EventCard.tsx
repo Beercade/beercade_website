@@ -60,7 +60,7 @@ export function EventCard({
           </p>
         )}
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-display text-lg font-semibold text-crema">
+          <h3 className="font-heading text-lg font-semibold text-crema">
             {title}
           </h3>
           <StatusPill status={status} kind="event" className="shrink-0" />

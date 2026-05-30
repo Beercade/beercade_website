@@ -117,7 +117,7 @@ export function EventDetail({
 
             {machines && machines.length > 0 && (
               <div>
-                <h2 className="mb-3 font-display text-sm font-semibold uppercase tracking-widest text-crema/50">
+                <h2 className="mb-3 font-heading text-sm font-semibold uppercase tracking-widest text-crema/50">
                   Machines
                 </h2>
                 <div className="flex flex-wrap gap-2">

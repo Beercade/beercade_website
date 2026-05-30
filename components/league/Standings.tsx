@@ -47,7 +47,7 @@ export default async function Standings({
   return (
     <div className="overflow-x-auto">
       {tournamentName && (
-        <h3 className="mb-3 font-[family-name:var(--font-display)] text-xl">
+        <h3 className="mb-3 font-[family-name:var(--font-heading)] text-xl">
           {tournamentName}
         </h3>
       )}

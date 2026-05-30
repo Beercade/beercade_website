@@ -116,7 +116,7 @@ export default async function FindUsPage() {
         aria-label="Opening hours"
       >
         <Container>
-          <h2 className="mb-6 font-display text-2xl font-bold text-crema">
+          <h2 className="mb-6 font-heading text-2xl font-bold text-crema">
             Hours.
           </h2>
           {sortedHours ? (
@@ -160,7 +160,7 @@ export default async function FindUsPage() {
         aria-label="Accessibility"
       >
         <Container>
-          <h2 className="mb-3 font-display text-2xl font-bold text-crema">
+          <h2 className="mb-3 font-heading text-2xl font-bold text-crema">
             Access.
           </h2>
           <p className="max-w-prose font-body text-base text-crema/70">

@@ -64,7 +64,7 @@ export default async function WhatsOnPage() {
           <section className="mb-20" aria-labelledby="upcoming-heading">
             <h2
               id="upcoming-heading"
-              className="mb-6 font-display text-xl font-semibold text-crema"
+              className="mb-6 font-heading text-xl font-semibold text-crema"
             >
               Upcoming
             </h2>
@@ -81,7 +81,7 @@ export default async function WhatsOnPage() {
           <section aria-labelledby="standing-heading">
             <h2
               id="standing-heading"
-              className="mb-6 font-display text-xl font-semibold text-crema"
+              className="mb-6 font-heading text-xl font-semibold text-crema"
             >
               Every week
             </h2>
@@ -94,7 +94,7 @@ export default async function WhatsOnPage() {
                   <p className="font-body text-xs uppercase tracking-widest text-high-score-orange">
                     {night.dayOfWeek}
                   </p>
-                  <p className="mt-2 font-display text-lg font-semibold text-crema">
+                  <p className="mt-2 font-heading text-lg font-semibold text-crema">
                     {night.title}
                   </p>
                   {night.summary && (

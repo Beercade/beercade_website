@@ -105,7 +105,7 @@ export function ExitIntentPopup() {
         </p>
         <h2
           id="exit-popup-heading"
-          className="mb-2 font-display text-2xl font-bold text-crema"
+          className="mb-2 font-heading text-2xl font-bold text-crema"
         >
           Thursday nights, tournament dates, new machines.
         </h2>

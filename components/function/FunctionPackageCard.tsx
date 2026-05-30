@@ -30,7 +30,7 @@ export function FunctionPackageCard({
         className
       )}
     >
-      <h3 className="font-display text-xl font-bold text-crema">{name}</h3>
+      <h3 className="font-heading text-xl font-bold text-crema">{name}</h3>
 
       {pricePerHead && (
         <p className="mt-2 font-display text-3xl font-bold text-high-score-orange">

@@ -43,7 +43,7 @@ export function MachineCard({
       </div>
       <div className="flex flex-1 flex-col gap-2 p-4">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-display text-base font-semibold text-crema">
+          <h3 className="font-heading text-base font-semibold text-crema">
             {name}
           </h3>
           <StatusPill status={status} kind="machine" className="shrink-0" />

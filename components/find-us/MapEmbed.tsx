@@ -23,7 +23,7 @@ export function MapEmbed() {
       ) : (
         <div className="flex h-[400px] flex-col items-center justify-center gap-4 bg-after-dark text-center">
           <div className="space-y-1">
-            <p className="font-display text-base font-bold text-crema">
+            <p className="font-heading text-base font-bold text-crema">
               113 Regent Street
             </p>
             <p className="font-body text-sm text-crema/60">
